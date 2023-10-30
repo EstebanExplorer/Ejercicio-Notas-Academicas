@@ -40,12 +40,13 @@ public class GradeUsingFileRepositoryImpl implements GradeRepository {
     //Este ruta es diferente al momento de empaquetar el proyecto
 
     Path path = Paths.get( "./src/main/resources/notas.txt");
+    
     try (Stream<String> stream = Files.lines( path)) {
       return stream.toList();
     } catch (IOException x) {
-      logger.error("IOException: {0}", x);
+      logger.error("IOException: {}", x.getMessage(), x);
     }
-    return Collections.emptyList();//Devuelve una lista vacía
+    return Collections.emptyList();
   }
 
   private Grade buildGrade(String plainTextGrade){
@@ -75,12 +76,12 @@ public class GradeUsingFileRepositoryImpl implements GradeRepository {
     this.gradeList.add( newGrade );
 
     return this.gradeList.stream()
-            .filter( isTheGradeOfTheProject( newGrade ) )//Busca la nota en la lista que corresponda al proyecto de la nota recien creada
+            .filter( searchGradeOfTheProject( newGrade ) )//Busca la nota en la lista que corresponda al proyecto de la nota recien creada
             .findAny()
             .orElse( null );//Si no la encuentra devuelve nulo
   }
 
-  private Predicate<Grade> isTheGradeOfTheProject(Grade newGrade) {
+  private Predicate<Grade> searchGradeOfTheProject(Grade newGrade) {
     return p -> p.project().equals( newGrade.project() );
   }
 
